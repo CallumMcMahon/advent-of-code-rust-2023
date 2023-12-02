@@ -18,6 +18,11 @@ Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.
 
 ---
 
+
+## Solutions
+
+Solutions can be found under [src/bin](src/bin/)
+
 ## Template info
 
 Based on a great [template repository](https://github.com/fspoettel/advent-of-code-rust) on Github by [fspoettel](https://github.com/fspoettel). Please refer there for more information about the template.
