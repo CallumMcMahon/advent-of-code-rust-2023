@@ -1,5 +1,8 @@
+use std::collections::HashMap;
+
 advent_of_code::solution!(3);
 
+#[derive(Eq, Hash, PartialEq)]
 struct Coord {
     d1: usize,
     d2: usize,
@@ -75,6 +78,16 @@ fn does_surrounding_have_symbol(input_array: &Vec<Vec<char>>, from: Coord) -> bo
     return false;
 }
 
+fn does_surrounding_have_gear(input_array: &Vec<Vec<char>>, from: Coord) -> Option<Coord> {
+    let surround = surroundings(from, input_array.len(), input_array[0].len());
+    for coord in surround {
+        if &input_array[coord.d1][coord.d2] == &'*' {
+            return Some(coord);
+        }
+    }
+    return None;
+}
+
 pub fn part_one(input: &str) -> Option<u32> {
     let input_array: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
 
@@ -123,7 +136,61 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let input_array: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
+    let mut gear_to_number: HashMap<Coord, Vec<u32>> = HashMap::new();
+
+    let mut count: u32 = 0;
+    for (row_idx, row) in input_array.iter().enumerate() {
+        let mut col_idx = 0;
+        while col_idx < row.len() {
+            if !row[col_idx].is_ascii_digit() {
+                col_idx += 1;
+                continue;
+            }
+            let mut near_gear = does_surrounding_have_gear(
+                &input_array,
+                Coord {
+                    d1: row_idx,
+                    d2: col_idx,
+                },
+            );
+            let mut col_end = 0;
+            for (col_offset, val) in row[col_idx..].iter().enumerate() {
+                if !val.is_ascii_digit() {
+                    break;
+                }
+                col_end = col_offset;
+                if near_gear == None {
+                    near_gear = does_surrounding_have_gear(
+                            &input_array,
+                            Coord {
+                                d1: row_idx,
+                                d2: col_idx + col_offset,
+                            },
+                        );
+                }
+            }
+            if let Some(gear_coord) = near_gear {
+                let new_num = row[col_idx..(col_idx + col_end + 1)]
+                    .iter()
+                    .collect::<String>()
+                    .parse::<u32>()
+                    .unwrap();
+                gear_to_number.entry(gear_coord).or_insert(Vec::new()).push(new_num);
+            }
+            col_idx += col_end + 1
+        }
+    }
+    for part_numbers in gear_to_number.into_values() {
+        if part_numbers.len() > 1 {
+            let mut result = 1;
+            for elem in part_numbers {
+                result *= elem;
+            }
+            count += result;
+        }
+    }
+    return Some(count);
 }
 
 #[cfg(test)]
@@ -139,6 +206,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(467835));
     }
 }
