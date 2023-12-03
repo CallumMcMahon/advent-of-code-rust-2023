@@ -6,11 +6,11 @@ mod arp_parser {
     use super::{Colour, Cube, Game, Grab};
     use nom::{
         bytes::complete::tag,
-        character::complete::{alpha1, digit1, newline, u8},
+        character::complete::{alpha1, digit1, newline},
         combinator::into,
         error::Error as NomError,
         multi::separated_list0,
-        sequence::{delimited, preceded, tuple},
+        sequence::{delimited, tuple},
         Finish, IResult,
     };
 

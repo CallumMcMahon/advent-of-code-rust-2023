@@ -162,12 +162,12 @@ pub fn part_two(input: &str) -> Option<u32> {
                 col_end = col_offset;
                 if near_gear == None {
                     near_gear = does_surrounding_have_gear(
-                            &input_array,
-                            Coord {
-                                d1: row_idx,
-                                d2: col_idx + col_offset,
-                            },
-                        );
+                        &input_array,
+                        Coord {
+                            d1: row_idx,
+                            d2: col_idx + col_offset,
+                        },
+                    );
                 }
             }
             if let Some(gear_coord) = near_gear {
@@ -176,7 +176,10 @@ pub fn part_two(input: &str) -> Option<u32> {
                     .collect::<String>()
                     .parse::<u32>()
                     .unwrap();
-                gear_to_number.entry(gear_coord).or_insert(Vec::new()).push(new_num);
+                gear_to_number
+                    .entry(gear_coord)
+                    .or_insert(Vec::new())
+                    .push(new_num);
             }
             col_idx += col_end + 1
         }
