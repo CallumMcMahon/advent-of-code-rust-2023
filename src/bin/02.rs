@@ -9,7 +9,7 @@ mod arp_parser {
         character::complete::{u8, digit1, alpha1, newline}, 
         combinator::into, 
         error::Error as NomError,
-        sequence::{preceded, tuple}, 
+        sequence::{preceded, tuple, delimited}, 
         Finish, IResult, multi::separated_list0,
     };
 
@@ -35,8 +35,8 @@ mod arp_parser {
     }
 
     fn parse_game(input: &str) -> IResult<&str, Game> {
-        let (remainder, game_number) = preceded(
-            tag("Game "), digit1
+        let (remainder, game_number) = delimited(
+            tag("Game "), digit1, tag(":")
         )(input)?;
         let (remainder, grabs) = separated_list0(
             tag(";"), parse_grab
