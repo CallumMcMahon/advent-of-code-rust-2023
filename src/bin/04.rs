@@ -1,12 +1,5 @@
 advent_of_code::solution!(4);
 
-use nom::{
-    bytes::complete::tag,
-    character::complete::{digit1, multispace0, multispace1, space0, space1},
-    combinator::map_res,
-    multi::{many1, separated_list1},
-    IResult,
-};
 use std::collections::HashSet;
 
 #[derive(Debug)]
@@ -35,43 +28,60 @@ impl Card {
     }
 }
 
-fn parse_numbers(input: &str) -> IResult<&str, Vec<u32>> {
-    separated_list1(multispace1, map_res(digit1, str::parse))(input)
-}
+mod input_parser {
+    use super::Card;
+    use nom::{
+        bytes::complete::tag,
+        character::complete::{digit1, multispace0, multispace1, space0, space1},
+        combinator::map_res,
+        error::Error as NomError,
+        multi::{many1, separated_list1},
+        Finish, IResult,
+    };
 
-fn parse_card(input: &str) -> IResult<&str, Card> {
-    let (input, _) = tag("Card")(input)?;
-    let (input, _) = space1(input)?;
-    let (input, _) = digit1(input)?;
+    fn parse_numbers(input: &str) -> IResult<&str, Vec<u32>> {
+        separated_list1(multispace1, map_res(digit1, str::parse))(input)
+    }
 
-    let (input, _) = tag(":")(input)?;
-    let (input, _) = space1(input)?;
+    fn parse_card(input: &str) -> IResult<&str, Card> {
+        let (input, _) = tag("Card")(input)?;
+        let (input, _) = space1(input)?;
+        let (input, _) = digit1(input)?;
 
-    let (input, winning_numbers) = parse_numbers(input)?;
+        let (input, _) = tag(":")(input)?;
+        let (input, _) = space1(input)?;
 
-    let (input, _) = tag(" | ")(input)?;
-    let (input, _) = space0(input)?;
+        let (input, winning_numbers) = parse_numbers(input)?;
 
-    let (input, held_numbers) = parse_numbers(input)?;
-    let (input, _) = multispace0(input)?;
+        let (input, _) = tag(" | ")(input)?;
+        let (input, _) = space0(input)?;
 
-    Ok((
-        input,
-        Card::new(
-            winning_numbers.into_iter().collect(),
-            held_numbers.into_iter().collect(),
-        ),
-    ))
+        let (input, held_numbers) = parse_numbers(input)?;
+        let (input, _) = multispace0(input)?;
+
+        Ok((
+            input,
+            Card::new(
+                winning_numbers.into_iter().collect(),
+                held_numbers.into_iter().collect(),
+            ),
+        ))
+    }
+
+    pub fn parse_cards(input: &str) -> Result<Vec<Card>, NomError<&str>> {
+        let (_, cards) = many1(parse_card)(input).finish()?;
+        Ok(cards)
+    }
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let cards: Vec<_> = many1(parse_card)(&input).unwrap().1;
+    let cards: Vec<_> = input_parser::parse_cards(input).unwrap();
     let count = cards.into_iter().fold(0, |acc, e| acc + e.points());
     return Some(count);
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let cards: Vec<_> = many1(parse_card)(&input).unwrap().1;
+    let cards: Vec<_> = input_parser::parse_cards(input).unwrap();
     let mut counts = vec![1; cards.len()];
     for (i, card) in cards.iter().enumerate() {
         let copies = card.copies();
