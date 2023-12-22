@@ -115,11 +115,10 @@ pub fn part_two(input: &str) -> Option<u64> {
     let mut min_per_range = Vec::new();
     for seed_range in maps.seed_ranges() {
         println!("Encountered new range starting at {}", seed_range.start);
-        let seed_range: Vec<u64> = seed_range.collect();
         min_per_range.push(
             seed_range
-                .par_iter()
-                .map(|seed| maps.seed_to_location(*seed))
+                .into_par_iter()
+                .map(|seed| maps.seed_to_location(seed))
                 .min()?,
         )
     }
