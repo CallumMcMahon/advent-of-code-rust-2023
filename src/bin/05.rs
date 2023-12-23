@@ -77,11 +77,19 @@ mod input_parser {
         let mut map_ranges = Vec::new();
         for map in maps.iter() {
             map_ranges.push(MapRange {
-                range: Range { start: map[1], end: map[1] + map[2] },
+                range: Range {
+                    start: map[1],
+                    end: map[1] + map[2],
+                },
                 translation: map[0] as i64 - map[1] as i64,
             })
         }
-        return Ok((input, CategoryTransformer { mappings: map_ranges }));
+        return Ok((
+            input,
+            CategoryTransformer {
+                mappings: map_ranges,
+            },
+        ));
     }
 
     fn parse_maps(input: &str) -> IResult<&str, Mapping> {
