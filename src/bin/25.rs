@@ -1,16 +1,13 @@
 advent_of_code::solution!(25);
 
-use petgraph::{graph::UnGraph, graphmap::UnGraphMap, Graph};
+use petgraph::graphmap::UnGraphMap;
 
 mod input_parser {
     use super::Line;
     use nom::{
-        bytes::complete::{tag, take},
+        bytes::complete::tag,
         character::complete::multispace0,
-        character::{
-            self,
-            complete::{alpha1, space1},
-        },
+        character::complete::{alpha1, space1},
         error::Error as NomError,
         multi::{many1, separated_list1},
         Finish, IResult,
@@ -76,15 +73,6 @@ pub fn part_one(input: &str) -> Option<u32> {
         }
     }
     panic!("Edge combination not found!")
-    // let components_1 = connected_components(&gr);
-    // gr.remove_edge("pzl", "hfx");
-    // gr.remove_edge("bvb", "cmg");
-    // gr.remove_edge("nvd", "jqt");
-    // // let pg = deps.add_node("petgraph");
-    // // let pg2 = deps.add_node("petgraph");
-    // let components_2 = connected_components(&gr);
-    // 1 + 1;
-    // todo!();
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
