@@ -40,7 +40,13 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    None
+    let sequences = parse_input(input);
+    let differences: Vec<Vec<Vec<i32>>> = sequences.into_iter().map(get_differences).collect();
+    let total: i32 = differences
+        .iter()
+        .map(|x| x.iter().rev().fold(0, |acc, x| x.first().unwrap() - acc))
+        .sum();
+    return Some(total as u32);
 }
 
 #[cfg(test)]
@@ -56,6 +62,6 @@ mod tests {
     #[test]
     fn test_part_two() {
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
-        assert_eq!(result, None);
+        assert_eq!(result, Some(2));
     }
 }
